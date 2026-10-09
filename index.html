@@ -59,7 +59,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 /* top bar */
 .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .bar h1{display:flex;align-items:center;gap:8px;white-space:nowrap;font-family:var(--f-display);font-weight:400;font-size:26px;margin:0;letter-spacing:.01em;flex:1;min-width:0}
-.bar .brand-logo{display:block;width:min(100%,230px);height:56px;object-fit:contain;object-position:left center}
+.bar .brand-home{display:block;flex:none;width:min(100%,230px);height:56px;line-height:0}
+.bar .brand-logo{display:block;width:100%;height:100%;object-fit:contain;object-position:left center}
 .bar h1 small{font-family:var(--f-body);font-size:12px;color:var(--muted);margin-left:8px;letter-spacing:.04em}
 .ghost{background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--ink)}
 .ghost:hover{border-color:var(--brass)}
@@ -387,7 +388,7 @@ body.wide-table .res-cards{--cw:30px;width:68px}
   .hero h2{font-size:38px}
   .bar{gap:6px}
   .bar h1{font-size:22px}
-  .bar .brand-logo{width:min(42vw,190px);height:46px}
+  .bar .brand-home{width:min(42vw,190px);height:46px}
   .bar h1 small{display:none}
   .bar .ghost{padding:6px 10px;font-size:12px}
 }
@@ -1281,7 +1282,7 @@ function logName(s, e){
 function renderLobby(){
   const peerOk = onlineSupported();
   app.innerHTML = `
-  <div class="bar"><h1><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"></h1><button class="ghost" data-a="rules">족보·규칙</button>${languageSelect()}</div>
+  <div class="bar"><h1><a class="brand-home" href="/"><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"></a></h1><button class="ghost" data-a="rules">족보·규칙</button>${languageSelect()}</div>
   <section class="hero">
     <div class="suits">♠ ♥ ♦ ♣</div>
     <h2>텍사스 홀덤</h2>
@@ -1320,7 +1321,7 @@ function renderLobby(){
 let pendingRoom = null;
 function renderJoin(){
   app.innerHTML = `
-  <div class="bar"><h1><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"></h1><button class="ghost" data-a="rules">족보·규칙</button>${languageSelect()}</div>
+  <div class="bar"><h1><a class="brand-home" href="/"><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"></a></h1><button class="ghost" data-a="rules">족보·규칙</button>${languageSelect()}</div>
   <section class="hero">
     <div class="suits">♠ ♥ ♦ ♣</div>
     <h2>초대받은 테이블</h2>
@@ -1420,8 +1421,8 @@ function currentState(){ return view==='local' ? localState : net.state; }
 function renderTable(){
   const s = currentState();
   const head = view==='local'
-    ? `<div class="bar"><h1><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"><small>컴퓨터 · ${LEVELS[s && s.level || 'normal'].name}</small></h1><button class="ghost" data-a="rules">족보</button>${languageSelect()}<button class="ghost" data-a="leave">나가기</button></div>`
-    : `<div class="bar"><h1><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"><small>${net.role==='host'?'온라인 · 방장':'온라인'}</small></h1><button class="ghost" data-a="invite" data-copy>초대 링크 복사</button><button class="ghost" data-a="rules">족보</button>${languageSelect()}<button class="ghost" data-a="leave">나가기</button></div>`;
+    ? `<div class="bar"><h1><a class="brand-home" href="/"><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"></a><small>컴퓨터 · ${LEVELS[s && s.level || 'normal'].name}</small></h1><button class="ghost" data-a="rules">족보</button>${languageSelect()}<button class="ghost" data-a="leave">나가기</button></div>`
+    : `<div class="bar"><h1><a class="brand-home" href="/"><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"></a><small>${net.role==='host'?'온라인 · 방장':'온라인'}</small></h1><button class="ghost" data-a="invite" data-copy>초대 링크 복사</button><button class="ghost" data-a="rules">족보</button>${languageSelect()}<button class="ghost" data-a="leave">나가기</button></div>`;
   const statusLine = view==='online' && net.status ? `<p class="note warn">${esc(net.status)}</p>` : '';
   if (!s){ app.innerHTML = `${head}${statusLine}<p class="status">${view==='online' && net.role==='guest' ? '방에 연결하는 중…' : '테이블을 준비하는 중…'}</p>${view==='online'&&net.status?`<button class="primary" data-a="leave">처음 화면으로</button>`:''}`; return; }
   const meId = myId();
