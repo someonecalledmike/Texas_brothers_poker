@@ -105,8 +105,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 .stage{font-size:11px;letter-spacing:.14em;color:var(--muted)}
 
 .seat{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px}
-.seat .hole{display:flex;gap:2px;--cw:25px;height:35px}
-.table.wide .seat .hole{--cw:clamp(36px,3vw,50px);height:calc(var(--cw)*1.4)}
+.seat .hole{display:flex;gap:2px;--cw:25px;height:34px}
+.table.wide .seat .hole{--cw:clamp(36px,3vw,50px);height:calc(var(--cw)*1.34)}
 .table.wide .plate{padding:6px 8px;border-radius:12px}
 .table.wide .plate .nm,.table.wide .plate .ch{font-size:clamp(13px,1vw,16px)}
 .table.wide .plate .st{font-size:12px}
@@ -135,7 +135,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 .emptyseat{border:1px dashed rgba(242,234,216,.12);border-radius:10px;padding:8px 6px;width:100%;font-size:11px;color:var(--faint);text-align:center}
 
 /* cards */
-.card{width:var(--cw);height:calc(var(--cw)*1.4);border-radius:calc(var(--cw)*.09);flex:none;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.4)}
+.card{width:var(--cw);height:calc(var(--cw)*1.34);border-radius:2px;flex:none;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.4)}
 .card svg{display:block;width:100%;height:100%}
 .card.empty{box-shadow:none;border:1.5px dashed rgba(242,234,216,.16)}
 .card.hl{box-shadow:0 0 0 2px var(--ok),0 2px 6px rgba(0,0,0,.45)}
@@ -445,11 +445,11 @@ input,textarea,select{font-size:16px}
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="suit-h" viewBox="0 0 100 100"><path fill="#c3312c" d="M50 92C21 68 4 51 4 31 4 15 16 5 30 5c9 0 16 5 20 13 4-8 11-13 20-13 14 0 26 10 26 26 0 20-17 37-46 61z"/></symbol>
-    <symbol id="suit-d" viewBox="0 0 100 100"><path fill="#c3312c" d="M50 2l38 48-38 48-38-48z"/></symbol>
-    <symbol id="suit-s" viewBox="0 0 100 100"><path fill="#1c2733" d="M50 3C40 24 7 39 7 61c0 14 11 23 23 23 8 0 14-4 17-10-1 10-5 17-13 23h32c-8-6-12-13-13-23 3 6 9 10 17 10 12 0 23-9 23-23C93 39 60 24 50 3z"/></symbol>
+    <symbol id="suit-h" viewBox="0 0 100 100"><path fill="#e11d2e" d="M50 92C21 68 4 51 4 31 4 15 16 5 30 5c9 0 16 5 20 13 4-8 11-13 20-13 14 0 26 10 26 26 0 20-17 37-46 61z"/></symbol>
+    <symbol id="suit-d" viewBox="0 0 100 100"><path fill="#e11d2e" d="M50 2l38 48-38 48-38-48z"/></symbol>
+    <symbol id="suit-s" viewBox="0 0 100 100"><path fill="#111111" d="M50 3C40 24 7 39 7 61c0 14 11 23 23 23 8 0 14-4 17-10-1 10-5 17-13 23h32c-8-6-12-13-13-23 3 6 9 10 17 10 12 0 23-9 23-23C93 39 60 24 50 3z"/></symbol>
     <symbol id="suit-s-line" viewBox="0 0 100 100"><path fill="none" stroke="#ffffff" stroke-width="2.6" d="M50 3C40 24 7 39 7 61c0 14 11 23 23 23 8 0 14-4 17-10-1 10-5 17-13 23h32c-8-6-12-13-13-23 3 6 9 10 17 10 12 0 23-9 23-23C93 39 60 24 50 3z"/></symbol>
-    <symbol id="suit-c" viewBox="0 0 100 100"><g fill="#1c2733"><circle cx="50" cy="27" r="20"/><circle cx="27" cy="58" r="20"/><circle cx="73" cy="58" r="20"/><circle cx="50" cy="52" r="12"/><path d="M47 58c-1 18-5 28-14 37h34c-9-9-13-19-14-37z"/></g></symbol>
+    <symbol id="suit-c" viewBox="0 0 100 100"><g fill="#111111"><circle cx="50" cy="27" r="20"/><circle cx="27" cy="58" r="20"/><circle cx="73" cy="58" r="20"/><circle cx="50" cy="52" r="12"/><path d="M47 58c-1 18-5 28-14 37h34c-9-9-13-19-14-37z"/></g></symbol>
     <pattern id="card-back" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
       <rect width="12" height="12" fill="#8e2a22"/><rect width="6" height="6" fill="#a8372d"/><circle cx="9" cy="9" r="1.6" fill="#e9dcc0" opacity=".55"/>
     </pattern>
@@ -955,35 +955,41 @@ function pip(s, x, y, size, flip){
   return `<use href="#suit-${s}" x="${x-h}" y="${y-h}" width="${size}" height="${size}"${flip?` transform="rotate(180 ${x} ${y})"`:''}/>`;
 }
 // 그림 카드 인물 (위쪽 절반을 그리고 180도 돌려서 아래쪽에 한 번 더)
-function courtHalf(r, s, ink){
+function courtHalf(r,s,ink){
+  const red='#c92732', blue='#174b8b', gold='#f1c440', black='#171717', skin='#f0d1ad';
+  const coat = r==='Q' ? red : blue;
+  const hair = r==='Q'
+    ? `<path d="M41 35 Q37 42 40 53 L44 57 L45 43 Z M59 35 Q63 42 60 53 L56 57 L55 43 Z" fill="#30221b" stroke="${black}" stroke-width=".8"/>`
+    : `<path d="M42 35 Q50 29 58 35 L57 40 Q54 37 50 38 Q46 37 43 41 Z" fill="#30221b" stroke="${black}" stroke-width=".8"/>`;
   const crown = r==='K'
-    ? `<path d="M39 33 L39 23 L44 28 L50 20 L56 28 L61 23 L61 33 Z" fill="#e2b13c" stroke="#7a5a12" stroke-width="1"/><circle cx="50" cy="20" r="2" fill="#c3312c"/>`
+    ? `<path d="M39 32 L38 22 L44 27 L50 18 L56 27 L62 22 L61 32 Z" fill="${gold}" stroke="${black}" stroke-width="1.2"/><circle cx="50" cy="20" r="2" fill="${red}" stroke="${black}" stroke-width=".6"/>`
     : r==='Q'
-    ? `<path d="M40 33 L41 25 L45.5 29 L50 23 L54.5 29 L59 25 L60 33 Z" fill="#e2b13c" stroke="#7a5a12" stroke-width="1"/><circle cx="41" cy="24.5" r="1.8" fill="#fff"/><circle cx="50" cy="22.5" r="1.8" fill="#fff"/><circle cx="59" cy="24.5" r="1.8" fill="#fff"/>`
-    : `<path d="M39 34 Q50 19 61 34 Z" fill="${ink}" stroke="#2b2b2b" stroke-width="1"/><path d="M59 30 Q67 20 64 14" stroke="#e2b13c" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
-  const hair = r==='Q' ? `<path d="M40 36 Q38 48 42 54 L44 40 Z M60 36 Q62 48 58 54 L56 40 Z" fill="#7a4a1c"/>` : '';
-  const beard = r==='K' ? `<path d="M44 46 Q50 56 56 46 Q53 49 50 49 Q47 49 44 46 Z" fill="#d9d2c3" stroke="#8a7f6a" stroke-width=".6"/>` : '';
-  const item = r==='K'
-    ? `<path d="M68 70 L68 36" stroke="#9aa4ad" stroke-width="2.4"/><path d="M64 40 L72 40" stroke="#7a5a12" stroke-width="2.4"/>`
-    : r==='Q'
-    ? `<path d="M32 66 L33 44" stroke="#2f6b34" stroke-width="1.6"/><circle cx="33" cy="42" r="3.6" fill="#c3312c"/><circle cx="33" cy="42" r="1.4" fill="#e2b13c"/>`
-    : `<path d="M31 70 L31 40" stroke="#7a5a12" stroke-width="2"/><path d="M28 42 L31 34 L34 42 Z" fill="#9aa4ad"/>`;
-  return `<path d="M30 70 L33 56 Q36 51 44 50 L56 50 Q64 51 67 56 L70 70 Z" fill="${ink}" stroke="#2b2b2b" stroke-width="1"/>
-    <path d="M44 50 L50 62 L56 50" fill="#e2b13c" stroke="#7a5a12" stroke-width=".8"/>
-    <path d="M36 70 L38 60 M64 70 L62 60" stroke="#e2b13c" stroke-width="1.6"/>
-    ${hair}<circle cx="50" cy="41" r="7.5" fill="#f3d9b5" stroke="#2b2b2b" stroke-width="1"/>
-    <circle cx="47.3" cy="40" r=".9" fill="#2b2b2b"/><circle cx="52.7" cy="40" r=".9" fill="#2b2b2b"/>
-    ${beard}${crown}${item}${pip(s, 27, 29, 9)}`;
+    ? `<path d="M40 33 L41 25 L46 29 L50 22 L54 29 L59 25 L60 33 Z" fill="${gold}" stroke="${black}" stroke-width="1.2"/><circle cx="41" cy="24" r="1.5" fill="${red}"/><circle cx="50" cy="22" r="1.5" fill="${blue}"/><circle cx="59" cy="24" r="1.5" fill="${red}"/>`
+    : `<path d="M39 33 Q42 23 50 20 Q58 23 61 33 Z" fill="${blue}" stroke="${black}" stroke-width="1.1"/><path d="M53 25 Q62 17 63 12" fill="none" stroke="${red}" stroke-width="2.2" stroke-linecap="round"/><path d="M61 14 L66 9" fill="none" stroke="${gold}" stroke-width="1.5"/>`;
+  const beard = r==='K' ? `<path d="M43 47 Q50 57 57 47 L55 54 L50 59 L45 54 Z" fill="#eee5d3" stroke="${black}" stroke-width=".8"/>` : '';
+  const emblem = r==='Q'
+    ? `<path d="M31 67 L31 43" stroke="${black}" stroke-width="1.4"/><path d="M31 44 C24 40 27 35 31 39 C35 35 38 40 31 44 Z" fill="${red}" stroke="${black}" stroke-width=".7"/><path d="M28 67 L34 67" stroke="${gold}" stroke-width="2"/>`
+    : r==='K'
+    ? `<path d="M69 68 L69 39" stroke="${black}" stroke-width="1.8"/><path d="M65 43 L73 43 M69 39 L69 34" stroke="${gold}" stroke-width="2"/><circle cx="69" cy="34" r="2" fill="${red}" stroke="${black}" stroke-width=".6"/>`
+    : `<path d="M31 68 L31 39" stroke="${black}" stroke-width="1.8"/><path d="M27 42 L31 34 L35 42 Z" fill="${gold}" stroke="${black}" stroke-width=".8"/><path d="M28 46 L34 46" stroke="${red}" stroke-width="1.4"/>`;
+  const suitBadge = `<circle cx="50" cy="62" r="4.4" fill="#fff" stroke="${black}" stroke-width=".6"/>${pip(s,46.5,58.5,6)}`;
+  return `<g stroke="${black}" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M27 70 L32 57 L42 50 L58 50 L68 57 L73 70 Z" fill="${coat}" stroke-width="1.2"/>
+    <path d="M32 57 L42 51 L50 68 L58 51 L68 57 L64 70 L36 70 Z" fill="${gold}" stroke-width=".8"/>
+    <path d="M35 59 L42 55 M38 64 L45 60 M65 59 L58 55 M62 64 L55 60" fill="none" stroke="${red}" stroke-width="1.8"/>
+    <path d="M47 53 L50 58 L53 53" fill="#fff" stroke-width=".7"/>
+    <circle cx="50" cy="42" r="8.2" fill="${skin}" stroke-width="1"/>
+    ${hair}<path d="M46.8 41.5 L48.2 41.5 M51.8 41.5 L53.2 41.5" stroke-width="1.3"/><path d="M50 42 L49 46 L51 46" fill="none" stroke-width=".7"/>
+    <path d="M48 49 Q50 50.5 52 49" fill="none" stroke-width=".7"/>${beard}${crown}${emblem}${suitBadge}
+    <path d="M35 70 L38 66 M65 70 L62 66" fill="none" stroke="${gold}" stroke-width="1.5"/>
+  </g>`;
 }
-function cardSVG(c, mini){
+function cardSVG(c){
   const r = c[0], s = c[1], red = s==='h' || s==='d';
-  const ink = red ? '#c6323a' : '#202124';
+  const ink = red ? '#e11d2e' : '#111111';
   const rank = RANK_TXT(r);
-  const frame = `<rect x="1.5" y="1.5" width="97" height="137" rx="8" fill="#fffdf8" stroke="#a9a69e" stroke-width="2"/><rect x="5" y="5" width="90" height="130" rx="6" fill="none" stroke="#e8e2d7" stroke-width="1"/>`;
+  const frame = `<rect x="1" y="1" width="98" height="138" rx="2" fill="#fff" stroke="#111" stroke-width="2"/>`;
   const idx = `<g fill="${ink}"><text x="13" y="25" text-anchor="middle" font-size="${r==='T'?16:20}" font-weight="700" font-family="Arial,Helvetica,sans-serif" letter-spacing="${r==='T'?-1.5:0}">${rank}</text>${pip(s,13,38,12)}</g>`;
-  if (mini){
-    return `<svg viewBox="0 0 100 140" aria-hidden="true">${frame}<text x="50" y="76" text-anchor="middle" font-size="${r==='T'?49:58}" font-weight="700" fill="${ink}" font-family="Arial,Helvetica,sans-serif" letter-spacing="${r==='T'?-3:0}">${rank}</text>${pip(s,50,108,20)}</svg>`;
-  }
   let middle;
   if (r==='A') {
     middle = pip(s,50,70,50);
@@ -991,10 +997,10 @@ function cardSVG(c, mini){
     const size = r==='T' || r==='9' ? 14 : 17;
     middle = PIPS[r].map(([x,y])=>pip(s,x,y,size,y>70)).join('');
   } else {
-    middle = `<rect x="22" y="18" width="56" height="104" rx="4" fill="#f5eddd" stroke="#d5cbb8" stroke-width="1"/>
+    middle = `<rect x="22" y="18" width="56" height="104" rx="4" fill="#fff" stroke="#222" stroke-width=".8"/>
       <g><clipPath id="court-${c}"><rect x="23" y="19" width="54" height="102" rx="3"/></clipPath>
       <g clip-path="url(#court-${c})">${courtHalf(r,s,ink)}<g transform="rotate(180 50 70)">${courtHalf(r,s,ink)}</g></g></g>
-      <path d="M23 70 H77" stroke="#c9bda8" stroke-width=".8"/>`;
+      <path d="M23 70 H77" stroke="#222" stroke-width=".8"/>`;
   }
   return `<svg viewBox="0 0 100 140" aria-hidden="true">${frame}${middle}${idx}<g transform="rotate(180 50 70)">${idx}</g></svg>`;
 }
@@ -1141,7 +1147,7 @@ function cardHTML(c, opts={}){
       return cardHTML(c, opts).replace('class="card', 'class="card flip').replace(/^<div ([^>]*)>/, (m0, attrs)=>`<div ${attrs} style="animation-delay:${-el}ms"><span class="flipback">${BACK_SVG}</span>`).replace(' new"', '"').replace(' new ', ' ');
     }
   }
-  return `<div class="${cls}" data-card="${c}" role="img" aria-label="${label}">${cardSVG(c,opts.mini)}</div>`;
+  return `<div class="${cls}" data-card="${c}" role="img" aria-label="${label}">${cardSVG(c)}</div>`;
 }
 
 /* ---------- 카지노 칩 ---------- */
