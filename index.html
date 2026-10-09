@@ -137,7 +137,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 /* cards */
 .card{width:var(--cw);height:calc(var(--cw)*1.4);border-radius:calc(var(--cw)*.09);flex:none;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.4)}
 .card svg{display:block;width:100%;height:100%}
-.card .face{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;user-select:none;-webkit-user-drag:none;background:#fff}
 .card.empty{box-shadow:none;border:1.5px dashed rgba(242,234,216,.16)}
 .card.hl{box-shadow:0 0 0 2px var(--ok),0 2px 6px rgba(0,0,0,.45)}
 .card.dim{opacity:.5}
@@ -940,15 +939,15 @@ const cleanName = n => String(n||'').replace(/\s+/g,' ').trim().slice(0,10) || '
 // 숫자 카드 문양 위치 (아래쪽 절반은 실제 카드처럼 거꾸로)
 const PIPS = {
   A: [[50,70]],
-  2: [[50,30],[50,110]],
-  3: [[50,30],[50,70],[50,110]],
-  4: [[30,30],[70,30],[30,110],[70,110]],
-  5: [[30,30],[70,30],[50,70],[30,110],[70,110]],
-  6: [[30,30],[70,30],[30,70],[70,70],[30,110],[70,110]],
-  7: [[30,30],[70,30],[50,50],[30,70],[70,70],[30,110],[70,110]],
-  8: [[30,30],[70,30],[50,50],[30,70],[70,70],[50,90],[30,110],[70,110]],
-  9: [[30,28],[70,28],[30,56],[70,56],[50,70],[30,84],[70,84],[30,112],[70,112]],
-  T: [[30,28],[70,28],[50,42],[30,56],[70,56],[30,84],[70,84],[50,98],[30,112],[70,112]],
+  2: [[50,32],[50,108]],
+  3: [[50,32],[50,70],[50,108]],
+  4: [[31,31],[69,31],[31,109],[69,109]],
+  5: [[31,31],[69,31],[50,70],[31,109],[69,109]],
+  6: [[31,29],[69,29],[31,70],[69,70],[31,111],[69,111]],
+  7: [[31,29],[69,29],[31,70],[50,70],[69,70],[31,111],[69,111]],
+  8: [[31,27],[69,27],[31,56],[69,56],[31,84],[69,84],[31,113],[69,113]],
+  9: [[31,26],[69,26],[31,51],[69,51],[50,70],[31,89],[69,89],[31,114],[69,114]],
+  T: [[31,25],[69,25],[50,47],[31,48],[69,48],[31,92],[69,92],[50,93],[31,115],[69,115]],
 };
 const RANK_TXT = r => r==='T' ? '10' : r;
 function pip(s, x, y, size, flip){
@@ -976,67 +975,30 @@ function courtHalf(r, s, ink){
     <circle cx="47.3" cy="40" r=".9" fill="#2b2b2b"/><circle cx="52.7" cy="40" r=".9" fill="#2b2b2b"/>
     ${beard}${crown}${item}${pip(s, 27, 29, 9)}`;
 }
-// 스페이드 A: 전통 스타일 장식 (직접 그린 그림)
-function aceOfSpadesArt(){
-  const petals = Array.from({length:8}, (_,i)=>`<ellipse cx="50" cy="54" rx="1.6" ry="4.6" transform="rotate(${i*45} 50 59)" fill="#1c2733"/>`).join('');
-  const leaves = side => Array.from({length:5}, (_,i)=>{ const t = i/4, x = 50 + side*(13 + t*12), y = 118 - t*15, a = side*(-40 - t*25); return `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="1.6" ry="3.8" transform="rotate(${a.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="#1c2733"/>`; }).join('');
-  return `
-    <path d="M35 118 Q50 126 65 118" stroke="#1c2733" stroke-width="1.1" fill="none"/>
-    <path d="M50 118 C47 110 33 111 29 101" stroke="#1c2733" stroke-width="1" fill="none"/>
-    <path d="M50 118 C53 110 67 111 71 101" stroke="#1c2733" stroke-width="1" fill="none"/>
-    ${leaves(-1)}${leaves(1)}
-    <use href="#suit-s" x="12" y="20" width="76" height="76"/>
-    <use href="#suit-s-line" x="18" y="26" width="64" height="64"/>
-    <path d="M40 97 C34 103 27 101 28.5 95.5 C30 91 36 93 34 97" stroke="#1c2733" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-    <path d="M60 97 C66 103 73 101 71.5 95.5 C70 91 64 93 66 97" stroke="#1c2733" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-    <circle cx="50" cy="59" r="11.5" fill="#ffffff"/><circle cx="50" cy="59" r="10" fill="none" stroke="#1c2733" stroke-width=".8"/>
-    ${petals}<circle cx="50" cy="59" r="2.8" fill="#ffffff" stroke="#1c2733" stroke-width=".8"/>
-    <path d="M50 13 L52 16 L50 19 L48 16 Z" fill="#1c2733"/><circle cx="44.5" cy="16" r=".9" fill="#1c2733"/><circle cx="55.5" cy="16" r=".9" fill="#1c2733"/>`;
-}
-const COURT_IMG = r => 'JQK'.includes(r);
-// 그림 카드 12장을 미리 불러와 디코딩해 두고 계속 붙잡아 둠 (화면을 다시 그려도 바로 그려지게)
-const COURT_CACHE = {};
-(function preloadCourts(){
-  for (const r of 'JQK') for (const s of 'SHDC'){
-    const img = new Image(); img.decoding = 'async'; img.className = 'face'; img.alt = ''; img.draggable = false; img.src = `cards/${r}${s}.webp`;
-    COURT_CACHE[r+s] = img;
-    if (img.decode) img.decode().catch(()=>{});
-  }
-})();
-const courtReady = key => { const img = COURT_CACHE[key]; return !!(img && img.complete && img.naturalWidth > 0); };
-// 화면을 다시 그린 뒤, 미리 불러 둔 그림 요소를 그대로 옮겨 끼움 (새로 만들지 않으니 깜빡임이 없음)
-function mountFaces(root){
-  (root || document).querySelectorAll('.face-slot').forEach(slot=>{
-    const img = COURT_CACHE[slot.dataset.face];
-    if (!img) return;
-    slot.replaceWith(img.isConnected ? img.cloneNode() : img);
-  });
-}
 function cardSVG(c, mini){
   const r = c[0], s = c[1], red = s==='h' || s==='d';
-  const ink = red ? '#c3312c' : '#1c2733';
+  const ink = red ? '#c6323a' : '#202124';
+  const rank = RANK_TXT(r);
+  const frame = `<rect x="1.5" y="1.5" width="97" height="137" rx="8" fill="#fffdf8" stroke="#a9a69e" stroke-width="2"/><rect x="5" y="5" width="90" height="130" rx="6" fill="none" stroke="#e8e2d7" stroke-width="1"/>`;
+  const idx = `<g fill="${ink}"><text x="13" y="25" text-anchor="middle" font-size="${r==='T'?16:20}" font-weight="700" font-family="Arial,Helvetica,sans-serif" letter-spacing="${r==='T'?-1.5:0}">${rank}</text>${pip(s,13,38,12)}</g>`;
   if (mini){
-    return `<svg viewBox="0 0 100 140" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="137" rx="10" fill="#ffffff" stroke="#bdb6a4" stroke-width="2"/>
-      <text x="50" y="62" text-anchor="middle" font-size="${r==='T'?50:58}" font-weight="700" fill="${ink}" font-family="Arial,Helvetica,'Liberation Sans',sans-serif">${RANK_TXT(r)}</text>
-      ${pip(s, 50, 98, 52)}</svg>`;
+    return `<svg viewBox="0 0 100 140" aria-hidden="true">${frame}<text x="50" y="76" text-anchor="middle" font-size="${r==='T'?49:58}" font-weight="700" fill="${ink}" font-family="Arial,Helvetica,sans-serif" letter-spacing="${r==='T'?-3:0}">${rank}</text>${pip(s,50,108,20)}</svg>`;
   }
-  const idx = `<text x="12" y="25" text-anchor="middle" font-size="${r==='T'?17:21}" font-weight="600" fill="${ink}" font-family="Arial,Helvetica,'Liberation Sans',sans-serif" letter-spacing="${r==='T'?-1.8:0}">${RANK_TXT(r)}</text>${pip(s, 12, 36, 12)}`;
   let middle;
-  if (c==='As') {
-    middle = aceOfSpadesArt();
+  if (r==='A') {
+    middle = pip(s,50,70,50);
   } else if (PIPS[r]) {
-    const big = r==='A' ? (s==='s' ? 46 : 34) : 19;
-    middle = PIPS[r].map(([x,y])=>pip(s, x, y, big, y>70)).join('');
+    const size = r==='T' || r==='9' ? 14 : 17;
+    middle = PIPS[r].map(([x,y])=>pip(s,x,y,size,y>70)).join('');
   } else {
-    middle = `<rect x="22" y="18" width="56" height="104" rx="3" fill="#f6ead0" stroke="${ink}" stroke-width="1.6"/>
-      <clipPath id="cf-${c}"><rect x="23" y="19" width="54" height="102" rx="2"/></clipPath>
-      <g clip-path="url(#cf-${c})">${courtHalf(r, s, ink)}<g transform="rotate(180 50 70)">${courtHalf(r, s, ink)}</g></g>
-      <path d="M22 70 L78 70" stroke="${ink}" stroke-width=".8" opacity=".5"/>`;
+    middle = `<rect x="22" y="18" width="56" height="104" rx="4" fill="#f5eddd" stroke="#d5cbb8" stroke-width="1"/>
+      <g><clipPath id="court-${c}"><rect x="23" y="19" width="54" height="102" rx="3"/></clipPath>
+      <g clip-path="url(#court-${c})">${courtHalf(r,s,ink)}<g transform="rotate(180 50 70)">${courtHalf(r,s,ink)}</g></g></g>
+      <path d="M23 70 H77" stroke="#c9bda8" stroke-width=".8"/>`;
   }
-  return `<svg viewBox="0 0 100 140" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="137" rx="8" fill="#ffffff" stroke="#bdb6a4" stroke-width="1.5"/>
-    ${middle}${idx}<g transform="rotate(180 50 70)">${idx}</g></svg>`;
+  return `<svg viewBox="0 0 100 140" aria-hidden="true">${frame}${middle}${idx}<g transform="rotate(180 50 70)">${idx}</g></svg>`;
 }
-const BACK_SVG = `<svg viewBox="0 0 100 140" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="137" rx="8" fill="#ffffff" stroke="#bdb6a4" stroke-width="1.5"/>
+const BACK_SVG = `<svg viewBox="0 0 100 140" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="137" rx="8" fill="#fffdf8" stroke="#a9a69e" stroke-width="2"/>
   <rect x="7" y="7" width="86" height="126" rx="5" fill="url(#card-back)"/><rect x="7" y="7" width="86" height="126" rx="5" fill="none" stroke="#e9dcc0" stroke-width="1.2"/>
   <rect x="13" y="13" width="74" height="114" rx="3" fill="none" stroke="#e9dcc0" stroke-width=".8" opacity=".7"/></svg>`;
 /* ---------- 족보 용어 설명 ---------- */
@@ -1171,6 +1133,7 @@ function cardHTML(c, opts={}){
   const key = (opts.key||'') + c;
   const fresh = opts.animate && !ui.seenCards.has(key); if (opts.animate) ui.seenCards.add(key);
   const label = `${RANK_TXT(c[0])} ${({s:'스페이드',h:'하트',d:'다이아',c:'클로버'})[c[1]]}`;
+  const cls = `card${opts.hl?' hl':''}${opts.dim?' dim':''}${fresh?' new':''}`;
   if (opts.flipAt){
     const el = Date.now() - opts.flipAt;
     if (el < 800){
@@ -1178,13 +1141,7 @@ function cardHTML(c, opts={}){
       return cardHTML(c, opts).replace('class="card', 'class="card flip').replace(/^<div ([^>]*)>/, (m0, attrs)=>`<div ${attrs} style="animation-delay:${-el}ms"><span class="flipback">${BACK_SVG}</span>`).replace(' new"', '"').replace(' new ', ' ');
     }
   }
-  if (!opts.mini && COURT_IMG(c[0])){
-    const key = c[0] + c[1].toUpperCase(), src = `cards/${key}.webp`;
-    // 이미 준비된 그림이면 예비 그림 없이 바로(동기 디코딩) 그려서 깜빡임이 없게
-    if (courtReady(key)) return `<div class="card${opts.hl?' hl':''}${opts.dim?' dim':''}${fresh?' new':''}" role="img" aria-label="${label}"><span class="face-slot" data-face="${key}"></span></div>`;
-    return `<div class="card${opts.hl?' hl':''}${opts.dim?' dim':''}${fresh?' new':''}" role="img" aria-label="${label}">${cardSVG(c, opts.mini)}<img class="face" src="${src}" alt="" draggable="false" decoding="sync" onerror="this.remove()"></div>`;
-  }
-  return `<div class="card${opts.hl?' hl':''}${opts.dim?' dim':''}${fresh?' new':''}" role="img" aria-label="${label}">${cardSVG(c, opts.mini)}</div>`;
+  return `<div class="${cls}" data-card="${c}" role="img" aria-label="${label}">${cardSVG(c,opts.mini)}</div>`;
 }
 
 /* ---------- 카지노 칩 ---------- */
@@ -1420,6 +1377,7 @@ function slotPos(k, N){ return isWide() ? wideSlot(k, N) : (SEAT_LAYOUT[N] || SE
 function currentState(){ return view==='local' ? localState : net.state; }
 function renderTable(){
   const s = currentState();
+  const heldCards = new Map([...app.querySelectorAll('.mine .hole > .card[data-card]')].map(card=>[card.dataset.card,card]));
   const head = view==='local'
     ? `<div class="bar"><h1><a class="brand-home" href="/"><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"></a><small>컴퓨터 · ${LEVELS[s && s.level || 'normal'].name}</small></h1><button class="ghost" data-a="rules">족보</button>${languageSelect()}<button class="ghost" data-a="leave">나가기</button></div>`
     : `<div class="bar"><h1><a class="brand-home" href="/"><img class="brand-logo" src="assets/texas-brothers-logo.png" alt="Texas Brothers Poker"></a><small>${net.role==='host'?'온라인 · 방장':'온라인'}</small></h1><button class="ghost" data-a="invite" data-copy>초대 링크 복사</button><button class="ghost" data-a="rules">족보</button>${languageSelect()}<button class="ghost" data-a="leave">나가기</button></div>`;
@@ -1508,6 +1466,13 @@ function renderTable(){
   ${renderDock(s, myIdx, now)}
   <ul class="log">${s.log.slice(-8).reverse().map(e=>`<li class="${e.i<0?'sys':''}">${e.i>=0?`<b data-lid="${esc(e.id)}" data-li="${e.i}" data-ln="${esc(e.n||'')}"></b> `:''}${esc(e.m)}</li>`).join('')}</ul>`;
 
+  app.querySelectorAll('.mine .hole > .card[data-card]').forEach(next=>{
+    const previous = heldCards.get(next.dataset.card);
+    if (!previous) return;
+    previous.className = next.className;
+    previous.setAttribute('aria-label', next.getAttribute('aria-label') || '');
+    next.replaceWith(previous);
+  });
   app.querySelectorAll('[data-nm]').forEach(el=>{ el.textContent = nameOf(s, +el.dataset.nm); });
   app.querySelectorAll('[data-li]').forEach(el=>{ el.textContent = logName(s, {i:+el.dataset.li, id:el.dataset.lid, n:el.dataset.ln}); });
   applyLanguage(app);
@@ -1549,7 +1514,6 @@ function renderTable(){
   };
   if (raiseBox) raiseBox.addEventListener('wheel',onRaiseWheel,{passive:false});
   tickTimers();
-  mountFaces(app);
   placeQuickChat();
   // 이름 입력 중 화면이 갱신돼도 입력이 끊기지 않게
   if (ui.renameOpen && ui.renameFocus){ const r = document.getElementById('rename-in'); if (r){ r.focus(); const n = r.value.length; try { r.setSelectionRange(n, n); } catch(_){} } }
@@ -2409,7 +2373,6 @@ document.addEventListener('pointerdown', e=>{
 function render(){
   document.body.classList.toggle('wide-table', (view==='local' || view==='online') && isWide());
   if (view==='lobby') renderLobby(); else if (view==='join') renderJoin(); else renderTable();
-  mountFaces(app);
   if (view==='lobby' || view==='join') placeQuickChat();
   const box = document.getElementById('chatbox'); if (box && box.hidden === (view==='online' && !!net.state)) renderChat(true);
   applyLanguage(document.body);
